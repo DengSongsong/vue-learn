@@ -14,8 +14,13 @@
         <p>Original message: "{{ message }}"</p>
         <p>Computed reversed message: "{{ reversedMessage }}"</p>
         <p>{{ fullName }}</p>
+        <p>{{haiZeiTuan_Name}}</p>
+        <p>{{suoLong}}</p>
+        <p>{{naMei}}</p>
+        <p>{{xiangJiShi}}</p>
     </div>
     <script>
+        
         var vm = new Vue({
             el: '#example',
             data: {
@@ -23,6 +28,10 @@
                 firstName: 'Foo',
                 lastName: 'Bar',
                 // fullName: ''
+                haiZeiTuan_Name: '草帽海贼团',
+                suoLong: '草帽海贼团索隆',
+                naMei: '草帽海贼团娜美',
+                xiangJiShi: '草帽海贼团香吉士'
             },
             computed: {
                 // 计算属性的 getter
@@ -43,7 +52,7 @@
                 //     // console.log(this.data());
                 //     return this.message.split('').reverse().join('')
                 // },
-               
+
             },
             watch: {
                 // firstName: function (val) {
@@ -52,8 +61,19 @@
                 // lastName: function (val) {
                 //     this.fullName = this.firstName + ' ' + val
                 // }
-            }
-        })
+                haiZeiTuan_Name: function (newName) {
+                    this.suoLong = newName + '索隆'
+                    this.naMei = newName + '娜美'
+                    this.xiangJiShi = newName + '香吉士'
+                    console.log(this.suoLong)
+                    console.log(this.naMei)
+                    console.log(this.xiangJiShi)
+                }
+            },
+            
+        });
+        // 更改watch选项中监控的主数据
+        vm.haiZeiTuan_Name = '橡胶海贼团'
     </script>
 </body>
 
