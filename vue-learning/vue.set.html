@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>vue.set 全局操作</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/vue/2.1.3/vue.js"></script>
+</head>
+<body>
+    <h1>vue.set 全局操作</h1>
+    <hr>
+    <div id="App">
+        {{count}}
+    </div>
+    <p><button onclick="add()">add</button></p>
+    <script>
+        function add(){
+            // Vue.set(outData, 'count', 2);
+            // vm.count++;
+            outData.count++;
+        }
+        var outData = {
+            count: 1,
+            goods: 'car'
+        }
+        const vm = new Vue({
+            el: '#App',
+            data: outData,
+            methods: {
+                
+            }
+        });
+    </script>
+</body>
+</html>
