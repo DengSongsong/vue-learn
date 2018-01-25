@@ -2,7 +2,9 @@
   <div id="app">
     <!-- 左侧导航 -->
     <leftNav></leftNav>
-    <router-view/>
+    <div class="main">
+      <router-view/>
+    </div>
   </div>
 </template>
 
@@ -23,5 +25,13 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+.main{
+  float:left;
+  width:95%; 
+  background-color: #EFF2F7;
+  height:100%;
+  overflow: auto;
+
 }
 </style>
