@@ -4,15 +4,15 @@
           <el-row>
               <el-col :span="8" class="pos-order" id="order-list">
                   <el-tabs>
-                      <el-tab-pane label="点餐" border style="width: 100%;text-align:center;">
-                          <el-table :data="tableData">
+                      <el-tab-pane label="点餐">
+                          <el-table :data="tableData" border style="width: 100%;text-align:center;">
                               <el-table-column prop="goodsName" label="商品"></el-table-column>
                               <el-table-column prop="count" label="量" width="50"></el-table-column>
                               <el-table-column prop="price" label="金额" width="70"></el-table-column>
                               <el-table-column label="操作" width="100" fixed="right">
                                 <template slot-scope="scope">
-                                    <el-button type="text" size="small">删除</el-button>
-                                    <el-button type="text" size="small">增加</el-button>
+                                    <el-button type="text" size="small" @click="delSingleGoods(scope.row)">删除</el-button>
+                                    <el-button type="text" size="small" @click="addOrderList(scope.row)">增加</el-button>
                                 </template>
                               </el-table-column>   
                           </el-table>
@@ -22,14 +22,14 @@
                   </el-tabs>
                   <div id="totalDiv">
                       <small>数量</small>
-                      <strong></strong> &nbsp;&nbsp;
+                      <strong>{{totalCount}}</strong> &nbsp;&nbsp;
                       <small>总计：</small>
-                      <strong></strong> 元
+                      <strong>{{totalMoney}}</strong> 元
                   </div>
                   <div id="order-btn">
                       <el-button type="warning">挂单</el-button>
-                      <el-button type="danger">删除</el-button>
-                      <el-button type="success">结账</el-button>
+                      <el-button type="danger" @click="delAllGoods()">删除</el-button>
+                      <el-button type="success" @click="checkout()">结账</el-button>
                   </div>
               </el-col>
               <el-col :span="16">
@@ -37,7 +37,7 @@
                       <div class="title">常用商品</div>
                       <div class="often-goods-list">
                           <ul>
-                              <li v-for="goods in oftenGoods" :key="goods.id">
+                              <li v-for="goods in oftenGoods" :key="goods.id" @click="addOrderList(goods)">
                                   <span>{{goods.goodsName}}</span>
                                   <span class="o-price">￥{{goods.price}}</span>
                               </li>
@@ -48,7 +48,7 @@
                       <el-tabs>
                           <el-tab-pane label="汉堡">
                               <ul class='cookList'>
-                                  <li v-for="goods in type0Goods" :key="goods.id">
+                                  <li v-for="goods in type0Goods" :key="goods.id" @click="addOrderList(goods)">
                                      <span class="foodImg">
                                             <img :src="goods.goodsImg" width="100%">
                                         </span>
@@ -59,7 +59,7 @@
                           </el-tab-pane>
                           <el-tab-pane label="小食">
                               <ul class='cookList'>
-                                  <li v-for="goods in type1Goods" :key="goods.id">
+                                  <li v-for="goods in type1Goods" :key="goods.id" @click="addOrderList(goods)">
                                       <span class="foodImg">
                                             <img :src="goods.goodsImg" width="100%">
                                         </span>
@@ -70,7 +70,7 @@
                           </el-tab-pane>
                           <el-tab-pane label="饮料">
                               <ul class='cookList'>
-                                  <li v-for="goods in type2Goods" :key="goods.id">
+                                  <li v-for="goods in type2Goods" :key="goods.id" @click="addOrderList(goods)">
                                       <span class="foodImg">
                                             <img :src="goods.goodsImg" width="100%">
                                         </span>
@@ -81,7 +81,7 @@
                           </el-tab-pane>
                           <el-tab-pane label="套餐">
                               <ul class='cookList'>
-                                  <li v-for="goods in type3Goods" :key="goods.id">
+                                  <li v-for="goods in type3Goods" :key="goods.id" @click="addOrderList(goods)">
                                       <span class="foodImg">
                                             <img :src="goods.goodsImg" width="100%">
                                         </span>
@@ -108,6 +108,9 @@ export default {
             type1Goods: [],
             type2Goods: [],
             type3Goods: [],
+            totalMoney: 0, //订单总价格
+            totalCount: 0  //订单商品总数量
+
         }
     },
     created(){
@@ -137,6 +140,80 @@ export default {
         var orderHeight = document.body.clientHeight;
         document.getElementById("order-list").style.height = orderHeight + 'px';
     },
+    methods: {
+        //添加订单列表的方法
+        addOrderList(goods){
+            // console.log(goods);
+            this.totalCount = 0; //汇总数量清0
+            this.totalMoney = 0;
+            let isHave = false;
+            //判断是否这个商品已经存在于订单列表
+            for(let i = 0; i < this.tableData.length; i++){
+                // console.log(this.tableData[i].goodsId);
+                if(this.tableData[i].goodsId == goods.goodsId){
+                    isHave = true;
+                }
+            }
+            //根据isHave的值判断订单列表中是否已经有此商品
+            if(isHave){
+               let arr = this.tableData.filter(item => item.goodsId == goods.goodsId);
+               arr[0].count++;
+               console.log(arr);
+            }else{
+                let newGoods = {
+                    goodsId: goods.goodsId,
+                    goodsName: goods.goodsName,
+                    price: goods.price,
+                    count: 1
+                };
+                this.tableData.push(newGoods);
+                // console.log(this.tableData);  
+            }
+             this.getAllMoney();
+        },
+        //删除单个商品
+        delSingleGoods(goods) {
+            // console.log(goods);
+            this.tableData = this.tableData.filter(item => item.goodsId != goods.goodsId);
+            console.log(this.tableData);
+            this.getAllMoney();
+
+        },
+        //删除所有商品
+        delAllGoods() {
+            this.tableData = [];
+            this.totalCount = 0;
+            this.totalMoney = 0;
+        },
+        //汇总数量和金额
+        getAllMoney() {
+            this.totalCount = 0;
+            this.totalMoney = 0;
+            if (this.tableData) {
+                this.tableData.forEach((element) => {
+                    this.totalCount += element.count;
+                    this.totalMoney = this.totalMoney + (element.price * element.count);
+                });
+            }
+        },
+        //结账方法模拟
+        checkout() {
+            if (this.totalCount!=0) {
+                this.tableData = [];
+                this.totalCount = 0;
+                this.totalMoney = 0;
+                this.$message({
+                    message: '结账成功，感谢你又为店里出了一份力!',
+                    type: 'success'
+                });
+
+            }else{
+                this.$message.error('不能空结。老板了解你急切的心情！');
+
+            }
+
+        }
+    }
 }
 </script>
 <style>
