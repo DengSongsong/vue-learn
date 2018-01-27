@@ -7,12 +7,19 @@
     <title>Response system</title>
 </head>
 <body>
+    <div>
+        响应式系统
+        Vue.js 是一款 MVVM 框架，数据模型仅仅是普通的 JavaScript 对象，但是对这些对象进行操作时，
+        却能影响对应视图，它的核心实现就是「响应式系统」。尽管我们在使用 Vue.js 进行开发时不会直接修改「响应式系统」，
+        但是理解它的实现有助于避开一些常见的「坑」，也有助于在遇见一些琢磨不透的问题时可以深入其原理来解决它。   
+    </div>
     <script>
         function cb(val){
             //渲染视图
             console.log('视图更新啦~');
         }
         function defineRective(obj, key, val){
+            //实现对对象的「响应式」化
             Object.defineProperty(obj, key, {
                 enumerable: true, //属性可枚举
                 configurable: true, //属性可被修改或删除
@@ -28,11 +35,12 @@
                 }
             });
         }
+        // 函数参数value是要「响应式」化的对象
         function observer(value){
             if(!value || (typeof value !== 'object')){
                 return;
             }
-            Object.keys(value).forEach((key) => {
+            Object.keys(value).forEach((key) => {//通过遍历所有属性的方式对该对象的每一个属性都通过 defineReactive 处理
                 defineRective(value, key, value[key]);
             })
         }
@@ -47,6 +55,8 @@
                 test: 'I am test.'
             }
         });
+        console.log(o._data); // {o._data}
+        console.log(o.data); // undefined
         o._data.test = 'hello world.'//视图更新啦
 
     </script>
