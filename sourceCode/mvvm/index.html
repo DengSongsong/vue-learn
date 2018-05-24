@@ -8,10 +8,19 @@
 </head>
 <body>
   <div id="app">
-    <input type="text">
-    <div>我很帅</div>
-    {{message.}} {{b}}
+      <input type="text" v-model="someStr">
+      <input type="text" v-model="child.someStr">
+      <!-- <p v-class="className" class="abc">
+          {{someStr}}
+          <span v-text="child.someStr"></span>
+      </p> -->
+      <p>{{someStr}}</p>
+      <p>{{getHelloWord}}</p>
+      <p>{{name}}</p>
+      <p v-html="htmlStr"></p>
+      <button v-on:click="clickBtn">change model</button>
   </div>
+  <script src="http://cdn.bootcss.com/vue/1.0.25/vue.js"></script>
   <script src="./js/observer.js"></script>
   <script src="./js/watcher.js"></script>
   <script src="./js/compile.js"></script>
@@ -20,11 +29,28 @@
     let vm = new MVVM({
       el: '#app',
       data: {
-        message: {a: 'jxufe'},
-        b: 'MVVM'
-      }
+            someStr: 'hello ',
+            className: 'btn',
+            htmlStr: '<span style="color: #f00;">red</span>',
+            child: {
+                someStr: 'World !'
+            },
+            name: 'jxufe'
+      },
+      computed: {
+            getHelloWord: function() {
+                return this.someStr + this.child.someStr;
+            }
+        },
+        methods: {
+            clickBtn: function(e) {
+                var randomStrArr = ['childOne', 'childTwo', 'childThree'];
+                this.child.someStr = randomStrArr[parseInt(Math.random() * 3)];
+            }
+        }
     })
-    console.log(vm._data.message)
+    // console.log(vm._data.someStr)
+    // console.log(vm.someStr)
   </script>
 </body>
 </html>
